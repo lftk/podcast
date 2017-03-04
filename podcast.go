@@ -32,9 +32,9 @@ func (p PubData) MarshalText() (text []byte, err error) {
 }
 
 type Enclosure struct {
-	URL    string `xml:"url,attr"`
-	Length int64  `xml:"length,attr"`
-	Type   string `xml:"type,attr"`
+	URL    string        `xml:"url,attr"`
+	Length int64         `xml:"length,attr"`
+	Type   EnclosureType `xml:"type,attr"`
 }
 
 type Summary struct {
@@ -44,10 +44,10 @@ type Summary struct {
 type Item struct {
 	Title     string       `xml:"title"`
 	Link      string       `xml:"link,omitempty"`
-	Author    string       `xml:"itunes:author"`
-	Subtitle  string       `xml:"itunes:subtitle"`
-	Summary   *Summary     `xml:"itunes:summary"`
-	Image     *Image       `xml:"itunes:image"`
+	Author    string       `xml:"itunes:author,omitempty"`
+	Subtitle  string       `xml:"itunes:subtitle,omitempty"`
+	Summary   *Summary     `xml:"itunes:summary,omitempty"`
+	Image     *Image       `xml:"itunes:image,omitempty"`
 	Enclosure *Enclosure   `xml:"enclosure"`
 	GUID      string       `xml:"guid"`
 	PubDate   *PubData     `xml:"pubDate,omitempty"`
@@ -105,6 +105,10 @@ func (c *Channel) AddCategory(category, subcategory string) {
 
 func (c *Channel) AddItem(item *Item) {
 	c.Items = append(c.Items, item)
+}
+
+func (c *Channel) AddItemRev(item *Item) {
+	c.Items = append([]*Item{item}, c.Items...)
 }
 
 func (c *Channel) WriteTo(w io.Writer) (n int64, err error) {
